@@ -131,7 +131,7 @@ const Scanner = ({ route, navigation }) => {
   if (hasPermission === false) {
     return (
       <View style={styles.container}>
-        <Text style={{ margin: 10 }}>No access to camera</Text>
+        <Text style={{ margin: 10 }}>Proccessing access to camera</Text>
         <Button
           title={"Allow Camera"}
           onPress={() => askForCameraPermission()}

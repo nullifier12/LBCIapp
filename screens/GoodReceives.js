@@ -1,15 +1,63 @@
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  Button,
-  Text,
-  ScrollView,
-} from "react-native";
-import { DataTable } from "react-native-paper";
-import DirectShip from "../components/DirectShip";
+import { useEffect, useCallback, useState } from "react";
+import { View, StyleSheet, Alert } from "react-native";
 
+import DirectShip from "../components/DirectShip";
+import axios from "axios";
 const GoodReceives = ({ route, navigation }) => {
+  const [trxNdata, setTrxn] = useState([]);
+  const [headerInfo, setHeader] = useState({});
+  const [dest, setDest] = useState("");
+  const [timeCreated, setTime] = useState({});
+  // console.log(route.params.dataId);
+  const getTrackingDet = useCallback(async () => {
+    try {
+      await axios
+        .post("http://119.81.209.6:8082/fetchTrackingNoDetails", {
+          trackingno: route.params?.dataId,
+        })
+        .then((result) => {
+          // console.log(result.data);
+          const header = {
+            source: result.data.trxndetails[0].SourceID,
+            destination: result.data.trxndetails[0].DestinationID,
+            lastAction: result.data.trxndetails[0].InitiatedBy,
+            status: result.data.trxndetails[0].StatusMsg,
+          };
+          // console.log(header);
+          const newData = result.data.trxndetails.map((d) => {
+            return {
+              name: d.SKU_Name,
+              id: d.SKU_ID,
+              reqQTY: d.Qty,
+              recQTY: d.QtyReceived,
+            };
+          });
+          const timeOfCreation = {
+            time: result.data.trxndetails[0].DateCreated ?? "",
+          };
+          setTime(timeOfCreation);
+          setHeader(header);
+          setTrxn(newData);
+          setDest(result.data.trxntype);
+        });
+    } catch (error) {
+      Alert.alert(
+        "Oppss",
+        "The Data that you are Scanning is not on the productlist Please try another one",
+        [
+          {
+            text: "Okay",
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ]
+      );
+    }
+  }, []);
+  useEffect(() => {
+    getTrackingDet();
+  }, [getTrackingDet]);
   return (
     // <View style={styles.container}>
     //   <ScrollView>
@@ -229,8 +277,10 @@ const GoodReceives = ({ route, navigation }) => {
       />
       <View style={{ marginTop: 0 }}>
         <DirectShip
-          dataId={route.params?.dataId}
-          dataType={route.params?.dataType}
+          data={trxNdata}
+          header={headerInfo}
+          dest={dest}
+          time={timeCreated}
         />
       </View>
     </>

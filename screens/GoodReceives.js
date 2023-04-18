@@ -1,9 +1,12 @@
 import { useEffect, useCallback, useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 
-import DirectShip from "../components/DirectShip";
+import DirectShip from "../components/DS/DirectShip";
+import MR from "../components/MR/Mr";
+import Transfer from "../components/TRNS/Transfer";
 import axios from "axios";
 const GoodReceives = ({ route, navigation }) => {
+  // console.log(route.params);
   const [trxNdata, setTrxn] = useState([]);
   const [headerInfo, setHeader] = useState({});
   const [dest, setDest] = useState("");
@@ -276,12 +279,33 @@ const GoodReceives = ({ route, navigation }) => {
         }}
       />
       <View style={{ marginTop: 0 }}>
-        <DirectShip
-          data={trxNdata}
-          header={headerInfo}
-          dest={dest}
-          time={timeCreated}
-        />
+        {dest === "DIRECT_SHIP" ? (
+          <DirectShip
+            data={trxNdata}
+            header={headerInfo}
+            dest={dest}
+            time={timeCreated}
+            branchDept={route.params?.branchDept}
+          />
+        ) : dest === "MR" ? (
+          <MR
+            branchDept={route.params?.branchDept}
+            data={trxNdata}
+            header={headerInfo}
+            dest={dest}
+            time={timeCreated}
+          />
+        ) : dest === "TRANSFER" ? (
+          <Transfer
+            branchDept={route.params?.branchDept}
+            data={trxNdata}
+            header={headerInfo}
+            dest={dest}
+            time={timeCreated}
+          />
+        ) : (
+          ""
+        )}
       </View>
     </>
   );

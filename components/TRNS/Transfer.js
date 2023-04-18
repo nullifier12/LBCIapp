@@ -1,30 +1,25 @@
-// import { useState } from "react";
 import {
   View,
   StyleSheet,
   Button,
   Text,
   useWindowDimensions,
-  // Pressable,
 } from "react-native";
 import { DataTable } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
-// import ExpandableView from "./Expandable";
-import TableContent from "./TableContent";
-const DirectShip = (props) => {
-  // console.log(props.data.trxndetails[0].SourceID);
-  // console.log(props.time.time);
+import globalfunctions from "../../functions/globalfunction";
+import TransferTable from "./TransferTable";
+const Transfer = (props) => {
   const nav = useNavigation();
   const { width, height } = useWindowDimensions();
   const time = props.time.time;
   const formatTime = moment(time).format("L");
+  const initHeight = height > 780 ? 500 : 450;
 
-  // const [isColapse, setCollapse] = useState(false);
   const onSave = () => {
     nav.goBack();
   };
-  const initHeight = height > 780 ? 500 : 450;
   return (
     <View style={styles.container}>
       <DataTable style={styles.table}>
@@ -40,12 +35,11 @@ const DirectShip = (props) => {
             <Text style={styles.headerHeadInner}>{props.header.source}</Text>
           </View>
 
-          {props.dest === "MR" && (
-            <View>
-              <Text style={styles.headerHead}>Date Created</Text>
-              <Text style={styles.headerHeadInner}>{formatTime}</Text>
-            </View>
-          )}
+          <View>
+            <Text style={styles.headerHead}>Date Created</Text>
+            <Text style={styles.headerHeadInner}>{formatTime}</Text>
+          </View>
+
           <View>
             <Text style={styles.headerHead}>Destination</Text>
             <Text style={styles.headerHeadInner}>
@@ -73,15 +67,6 @@ const DirectShip = (props) => {
           >
             SKU Name
           </DataTable.Title>
-          {/* <DataTable.Title textStyle={styles.heaad} numeric>
-              SKUID
-              </DataTable.Title>
-              <DataTable.Title textStyle={styles.heaad} numeric>
-              ReqQty
-              </DataTable.Title>
-              <DataTable.Title textStyle={styles.heaad} numeric>
-              RecQTY
-            </DataTable.Title> */}
 
           <DataTable.Title
             textStyle={[styles.heaad]}
@@ -97,19 +82,22 @@ const DirectShip = (props) => {
             height: initHeight,
           }}
         >
-          <TableContent data={props.data} />
-
-          {/* <TableContent /> */}
+          {/* <MrTableContent data={props.data} /> */}
+          <TransferTable data={props.data} />
         </View>
       </DataTable>
 
-      <View style={styles.button}>
-        <Button title="Receive" color="#E90064" onPress={onSave} />
-      </View>
+      {props.header.destination === props.branchDept ? (
+        <View style={styles.button}>
+          <Button title="Receive" color="#E90064" onPress={onSave} />
+        </View>
+      ) : (
+        globalfunctions.checkBranch(nav)
+      )}
     </View>
   );
 };
-export default DirectShip;
+export default Transfer;
 const styles = StyleSheet.create({
   container: {
     padding: 20,

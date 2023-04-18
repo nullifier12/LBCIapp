@@ -103,6 +103,7 @@ const Scanner = ({ route, navigation }) => {
     navigation.navigate("GoodReceives", {
       dataId: data,
       dataType: type,
+      branchDept: route.params?.name,
     });
 
     // Alert.alert(data, "scanned", [

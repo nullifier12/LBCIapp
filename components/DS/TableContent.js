@@ -2,6 +2,7 @@ import { ScrollView } from "react-native";
 
 import TableData from "./TableData";
 const TableContent = (props) => {
+  // console.log(props);
   //   console.log(props);
   return (
     <ScrollView>
